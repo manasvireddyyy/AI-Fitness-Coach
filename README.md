@@ -1,4 +1,4 @@
-# AI Fitness Coach 🏋️‍♀️
+# AI Fitness Coach 🏋️‍♀️  version 1
 
 An AI-powered fitness coach built using Python, OpenCV, and MediaPipe that performs real-time human pose estimation and squat repetition counting through computer vision.
 
@@ -38,3 +38,4 @@ The application tracks the hip, knee, and ankle landmarks using MediaPipe Pose. 
 pip install -r requirements.txt
 python main.py
 ```
+<img width="216" height="123" alt="Screenshot 2026-06-10 at 10 38 55 PM" src="https://github.com/user-attachments/assets/8a7192f1-ae8c-4c6c-be39-d45487379c80" />
