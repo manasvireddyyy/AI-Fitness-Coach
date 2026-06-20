@@ -55,9 +55,9 @@ while cap.isOpened():
 
         # Check visibility
         if (
-            hip_landmark.visibility > 0.8 and
-            knee_landmark.visibility > 0.8 and
-            ankle_landmark.visibility > 0.8
+            hip_landmark.visibility > 0.3 and
+            knee_landmark.visibility > 0.3 and
+            ankle_landmark.visibility > 0.3
         ):
 
             hip = [hip_landmark.x, hip_landmark.y]
@@ -65,6 +65,7 @@ while cap.isOpened():
             ankle = [ankle_landmark.x, ankle_landmark.y]
 
             angle = calculate_angle(hip, knee, ankle)
+            print("Angle:", angle)
             if angle > 165:
                  feedback = "STAND UP"
 
@@ -177,13 +178,25 @@ while cap.isOpened():
     2
     )
 
+    if feedback == "GOOD SQUAT":
+        feedback_color = (0, 255, 0)      # Green
+
+    elif feedback == "GO LOWER":
+        feedback_color = (0, 255, 255)    # Yellow
+
+    elif feedback == "STAND UP":
+        feedback_color = (0, 0, 255)      # Red
+
+    else:
+        feedback_color = (255, 255, 255)  # White
+
     cv2.putText(
         frame,
         feedback,
         (15, 210),
         cv2.FONT_HERSHEY_SIMPLEX,
         1,
-        (255, 255, 255),
+        feedback_color,
         2
     )
 
