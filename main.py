@@ -28,6 +28,7 @@ pose = mp_pose.Pose()
 # Counter variables
 counter = 0
 stage = None
+feedback = ""
 
 # Camera
 cap = cv2.VideoCapture(0)
@@ -64,6 +65,14 @@ while cap.isOpened():
             ankle = [ankle_landmark.x, ankle_landmark.y]
 
             angle = calculate_angle(hip, knee, ankle)
+            if angle > 165:
+                 feedback = "STAND UP"
+
+            elif angle > 100:
+                 feedback = "GO LOWER"
+
+            else:
+                 feedback = "GOOD SQUAT"
 
             # Angle display
             cv2.putText(
@@ -74,7 +83,7 @@ while cap.isOpened():
                 1,
                 (0, 255, 255),
                 2
-            )
+            )   
 
             # Angle near knee
             cv2.putText(
@@ -118,8 +127,7 @@ while cap.isOpened():
             )
 
     # Dashboard
-    cv2.rectangle(frame, (0, 0), (250, 180), (245, 117, 16), -1)
-
+    cv2.rectangle(frame, (0, 0), (450, 250), (245, 117, 16), -1)
     cv2.putText(
         frame,
         "REPS",
@@ -158,6 +166,25 @@ while cap.isOpened():
         1.5,
         (255, 255, 255),
         3
+    )
+    cv2.putText(
+    frame,
+    "FEEDBACK",
+    (15, 150),
+    cv2.FONT_HERSHEY_SIMPLEX,
+    0.8,
+    (255, 255, 255),
+    2
+    )
+
+    cv2.putText(
+        frame,
+        feedback,
+        (15, 210),
+        cv2.FONT_HERSHEY_SIMPLEX,
+        1,
+        (255, 255, 255),
+        2
     )
 
     cv2.imshow("AI Fitness Coach", frame)
