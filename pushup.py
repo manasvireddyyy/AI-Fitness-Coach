@@ -53,23 +53,33 @@ while cap.isOpened():
         shoulder_landmark = landmarks[mp_pose.PoseLandmark.RIGHT_SHOULDER.value]
         elbow_landmark = landmarks[mp_pose.PoseLandmark.RIGHT_ELBOW.value]
         wrist_landmark = landmarks[mp_pose.PoseLandmark.RIGHT_WRIST.value]
+        ankle_landmark = landmarks[mp_pose.PoseLandmark.RIGHT_ANKLE.value]
 
         # Check visibility
         if (
-            shoulder_landmark.visibility > 0.3 and
-            elbow_landmark.visibility > 0.3 and
-            wrist_landmark.visibility > 0.3 and
-            hip_landmark.visibility > 0.3
+            shoulder_landmark.visibility > 0.6 and
+            elbow_landmark.visibility > 0.6 and
+            wrist_landmark.visibility > 0.6 and
+            hip_landmark.visibility > 0.6 and
+            ankle_landmark.visibility > 0.6
         ):
 
             shoulder = [shoulder_landmark.x, shoulder_landmark.y]
             elbow = [elbow_landmark.x, elbow_landmark.y]
             wrist = [wrist_landmark.x, wrist_landmark.y]
+            hip = [hip_landmark.x, hip_landmark.y]
+            ankle = [ankle_landmark.x, ankle_landmark.y]
 
-            body_angle = abs(
-                shoulder_landmark.y - hip_landmark.y
+            body_line_angle = calculate_angle(
+            shoulder,
+            hip,
+            ankle
             )
-            print("Body Angle:", body_angle)
+
+            if body_line_angle < 100:
+                continue
+
+            print("Body Line:", body_line_angle)
 
             angle = calculate_angle(shoulder, elbow, wrist)
 
@@ -78,13 +88,26 @@ while cap.isOpened():
 
             print("Angle:", angle)
 
-            if body_angle > 0.30:
+            # Check if body is in pushup position
+            body_line_angle = calculate_angle(
+                shoulder,
+                hip,
+                ankle
+            )
+
+            # print("Body Line:", body_line_angle)
+            print(
+                f"Body:{body_line_angle:.1f}  Elbow:{angle:.1f}  Stage:{stage}"
+            )
+
+            if body_line_angle < 110:
+
                 feedback = "GET INTO PUSHUP POSITION"
                 # stage = None
 
             else:
 
-                if angle > 165:
+                if angle > 160:
                     feedback = "PUSH UP"
 
                 elif angle > 80:
@@ -93,24 +116,36 @@ while cap.isOpened():
                 else:
                     feedback = "GOOD PUSHUP"
 
-                # Pushup counter logic
-               # Pushup counter logic
                 if angle > 160:
+                    print("UP DETECTED")
+
                     if stage == "DOWN":
                         counter += 1
                         print("REP COUNTED:", counter)
 
                     stage = "UP"
-                    print("STAGE = UP")
 
                 elif angle < 80:
-                    stage = "DOWN"
-                    print("STAGE = DOWN")
 
+                    stage = "DOWN"
+                    print("DOWN DETECTED")
+                
+                pushup_depth = False
+
+                if angle < 70:
+                    pushup_depth = True
+                    stage = "DOWN"
+
+                if angle > 160 and stage == "DOWN" and pushup_depth:
+                    counter += 1
+                    pushup_depth = False
+           
             # Angle display
+            progress = int((180- angle)/(180-40)*100)
+            progress = max(0,min(progress,100))
             cv2.putText(
                 frame,
-                f"Angle: {int(angle)}",
+                f"Progress: {progress}%",
                 (20, 150),
                 cv2.FONT_HERSHEY_SIMPLEX,
                 1,
@@ -119,6 +154,7 @@ while cap.isOpened():
             )   
 
             # Angle near knee
+            
             cv2.putText(
                 frame,
                 str(int(angle)),
@@ -131,15 +167,6 @@ while cap.isOpened():
                 (255, 255, 255),
                 2
             )
-
-            # Squat logic
-            if angle > 160:
-                if stage == "DOWN":
-                    counter += 1
-                stage = "UP"
-
-            elif angle < 80:
-                stage = "DOWN"
 
             # Draw skeleton
             mp_drawing.draw_landmarks(
@@ -211,16 +238,16 @@ while cap.isOpened():
     )
 
     if feedback == "GOOD PUSHUP":
-        feedback_color = (0, 255, 0)      # Green
+        feedback_color = (0, 255, 0)
 
-    elif feedback == "PUSH PUSHUP":
-        feedback_color = (0, 255, 255)    # Yellow
+    elif feedback == "GO LOWER":
+        feedback_color = (0, 255, 255)
 
-    elif feedback == "BAD PUSHUP":
-        feedback_color = (0, 0, 255)      # Red
+    elif feedback == "PUSH UP":
+        feedback_color = (0, 0, 255)
 
     else:
-        feedback_color = (255, 255, 255)  # White
+        feedback_color = (255, 255, 255)
 
     cv2.putText(
         frame,
