@@ -113,6 +113,10 @@ Manasvi Reddy
 * Improved project structure
 * Enhanced exercise tracking
 
-<img width="216" height="123" alt="Screenshot 2026-06-10 at 10 38 55 PM" src="https://github.com/user-attachments/assets/8a7192f1-ae8c-4c6c-be39-d45487379c80" />
+<img width="238" height="156" alt="Screenshot 2026-06-21 at 10 56 00 PM" src="https://github.com/user-attachments/assets/d2871e23-117d-4b41-81d9-4d96733f436c" />
+
+
+<img width="511" height="324" alt="Screenshot 2026-06-21 at 10 58 39 PM" src="https://github.com/user-attachments/assets/0b7e13b4-fbd8-4a0f-b144-33241623dfd0" />
+
 
 
